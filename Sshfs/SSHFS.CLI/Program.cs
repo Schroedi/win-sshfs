@@ -92,15 +92,49 @@ namespace SSHFS.CLI
             return auths;
         }
 
+        static String getPasswordFromConsole(String displayMessage)
+        {
+
+
+            String pass = "";
+            Console.Write(displayMessage);
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(true);
+
+                // Backspace Should Not Work
+                if (!char.IsControl(key.KeyChar))
+                {
+                    pass += key.KeyChar;
+                    Console.Write("*");
+                }
+                else
+                {
+                    if (key.Key == ConsoleKey.Backspace && pass.Length > 0)
+                    {
+                        pass = pass.Substring(0, (pass.Length - 1));
+                        Console.Write("\b \b");
+                    }
+                }
+            }
+            // Stops Receving Keys Once Enter is Pressed
+            while (key.Key != ConsoleKey.Enter);
+            return pass;
+        }
+
         static PrivateKeyConnectionInfo PrivateKeyConnectionInfo(Options options)
         {
             var pkFiles = options.Keys.Select(k =>
             {
                 var match = Regex.Match(k, @"(?<keyfile>\S+)(:?\s+ (?<passphrase>\S+))?");
                 var keyfile = match.Groups["keyfile"];
-                var passphrase = match.Groups["passphrase"];
+                //var passphrase = match.Groups["passphrase"];
+                var passphrase = getPasswordFromConsole("Private key passphrase:");
 
-                return passphrase.Success ? new PrivateKeyFile(keyfile.Value, passphrase.Value) : new PrivateKeyFile(keyfile.Value);
+
+                return new PrivateKeyFile(keyfile.Value, passphrase.ToString());
             });
 
             return new PrivateKeyConnectionInfo(options.Host, options.Port, options.Username, pkFiles.ToArray());

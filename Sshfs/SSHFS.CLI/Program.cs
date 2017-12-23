@@ -121,6 +121,8 @@ namespace SSHFS.CLI
             }
             // Stops Receving Keys Once Enter is Pressed
             while (key.Key != ConsoleKey.Enter);
+            // Indicate that we read the password
+            Console.WriteLine("");
             return pass;
         }
 
@@ -134,7 +136,7 @@ namespace SSHFS.CLI
                 var passphrase = getPasswordFromConsole("Private key passphrase:");
 
 
-                return new PrivateKeyFile(keyfile.Value, passphrase.ToString());
+                return new PrivateKeyFile(keyfile.Value, passphrase);
             });
 
             return new PrivateKeyConnectionInfo(options.Host, options.Port, options.Username, pkFiles.ToArray());

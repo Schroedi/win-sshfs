@@ -67,7 +67,7 @@ namespace SSHFS.CLI
             if (fs == null)
                 throw new InvalidOperationException("Could not connect to server with any known authentication mechanism");
 
-            fs.Mount($"{options.DriveLetter}");
+            fs.Mount($"{options.DriveLetter}", new DokanNet.Logging.NullLogger());
         }
 
         static IEnumerable<(string, ConnectionInfo)> GetAuthMechanisms(Options options)
